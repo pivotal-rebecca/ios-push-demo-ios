@@ -49,7 +49,7 @@
 // fetch data in the background (small amount of time) and call completionHandler
 // notifications can also supply true/false for new data, used in handler
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    NSLog(@"Got notification for background work: %@", userInfo);
+    [(MainViewController *)self.window.rootViewController updateLogWithMessage:@"Received in app delegate, not on launch, background handler"];
     
     [self handleReceivedNotification:userInfo];
     
@@ -59,7 +59,16 @@
 - (void)handleReceivedNotification:(NSDictionary *)payload {
     [(MainViewController *)self.window.rootViewController updateWithNotification:payload];
 }
-							
+
+
+#pragma mark - Local notification
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    [(MainViewController *)self.window.rootViewController updateLogWithMessage:@"Received local notification"];
+}
+
+#pragma mark - other stuff
+
 - (void)applicationWillResignActive:(UIApplication *)application {}
 - (void)applicationDidEnterBackground:(UIApplication *)application {}
 - (void)applicationWillEnterForeground:(UIApplication *)application {}

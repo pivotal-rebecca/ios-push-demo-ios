@@ -45,6 +45,15 @@
     [[UIApplication sharedApplication] unregisterForRemoteNotifications];
 }
 
+- (IBAction)scheduleLocalNotification:(id)sender {
+    [self updateLogWithMessage:@"Scheduling notification to fire in 5 seconds"];
+    
+    UILocalNotification *local = [UILocalNotification new];
+    local.alertBody = @"This is a local notification";
+    local.fireDate = [NSDate dateWithTimeIntervalSinceNow:5.0];
+    [[UIApplication sharedApplication] scheduleLocalNotification:local];
+}
+
 - (void)updateLogWithMessage:(NSString *)message {
     _logTextView.text = [message stringByAppendingFormat:@"\n\n%@", _logTextView.text];
 }
