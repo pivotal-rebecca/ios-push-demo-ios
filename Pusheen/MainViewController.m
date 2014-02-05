@@ -10,34 +10,43 @@
 
 @interface MainViewController ()
 
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (weak, nonatomic) IBOutlet UITextView *logTextView;
+
 @end
 
 @implementation MainViewController
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self updateLogWithMessage:@"Log started"];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-#pragma mark - Flipside View
-
-- (void)flipsideViewControllerDidFinish:(FlipsideViewController *)controller
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([[segue identifier] isEqualToString:@"showAlternate"]) {
-        [[segue destinationViewController] setDelegate:self];
+- (void)updateWithNotification:(NSDictionary *)payload {
+    [self updateLogWithMessage:[NSString stringWithFormat:@"Got push notification!\n%@", payload]];
+    
+    if (payload[@"image_url"]) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:payload[@"image_url"]]]];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _imageView.image = image;
+            });
+        });
     }
+}
+
+- (IBAction)registerForRemoteNotificationsTapped:(id)sender {
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeAlert];
+}
+
+- (IBAction)unregisterTapped:(id)sender {
+    [self updateLogWithMessage:@"Unregister notifications."];
+    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+}
+
+- (void)updateLogWithMessage:(NSString *)message {
+    _logTextView.text = [message stringByAppendingFormat:@"\n\n%@", _logTextView.text];
 }
 
 @end

@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Rebecca Putinski. All rights reserved.
 //
 
-#import "FlipsideViewController.h"
+@interface MainViewController : UIViewController
 
-@interface MainViewController : UIViewController <FlipsideViewControllerDelegate>
+- (void)updateWithNotification:(NSDictionary *)payload;
+- (void)updateLogWithMessage:(NSString *)message;
 
 @end
